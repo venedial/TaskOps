@@ -1,0 +1,15 @@
+environment: ""
+
+log:
+  stdout:
+    level: DEBUG
+  file:
+    level: DEBUG
+    path: ""
+
+pgdb:
+  host: ""
+  port: 5432
+  database: ""
+  username: ""
+  password: ""
