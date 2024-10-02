@@ -3,22 +3,21 @@ package config
 import (
 	"fmt"
 	"log/slog"
+	"os"
 
 	"github.com/spf13/viper"
 )
 
 var conf *Configuration
 
-func getConf() *Configuration {
+func GetConf() *Configuration {
 	if conf != nil {
 		return conf
 	} else {
-		conf, err := LoadConfigurationForEnv("dev")
-
-		// fix
+		conf, err := LoadConfigurationForEnv(os.Getenv("ENV"))
 		if err != nil {
 			slog.Error("Unable to load config from env")
-			return nil
+			os.Exit(1)
 		}
 
 		return conf
