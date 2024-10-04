@@ -49,7 +49,7 @@ func setupFileLogger(cfg *config.FileLogConfig) (slog.Handler, error) {
 		nil
 }
 
-func SetupLogger(cfg *config.Configuration) {
+func Setup(cfg *config.Configuration) {
 	handlers := []slog.Handler{
 		setupStdoutLogger(&cfg.Log.Stdout),
 	}
@@ -58,7 +58,7 @@ func SetupLogger(cfg *config.Configuration) {
 		fileHandler, err := setupFileLogger(cfg.Log.File)
 
 		if err != nil {
-			slog.Error("Unable to attach file logger with config %+v. Error: ", cfg.Log.File, slog.With("error", err))
+			slog.Error("Unable to attach file logger. Error: ", "file", cfg.Log.File, slog.With("error", err))
 		} else {
 			handlers = append(handlers, fileHandler)
 		}
@@ -70,7 +70,7 @@ func SetupLogger(cfg *config.Configuration) {
 	slog.Debug("Logger sucessfully initialized!")
 }
 
-func CleanupLogger() {
+func Cleanup() {
 	slog.Debug("Cleaning up logger...")
 
 	if logFile != nil {
@@ -83,7 +83,7 @@ func CleanupLogger() {
 		if err := logFile.Close(); err != nil {
 			slog.Warn("Failed to close log file", slog.With("error", err))
 		} else {
-			slog.Debug("Log file closed successfully")
+			slog.Debug("Log file successfully closed!")
 		}
 	}
 

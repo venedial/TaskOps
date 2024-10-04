@@ -2,44 +2,42 @@ package config
 
 import (
 	"fmt"
-	"log/slog"
 	"os"
+	"sync"
 
 	"github.com/spf13/viper"
 )
 
-var conf *Configuration
+var (
+	once sync.Once
+	conf *Configuration
+)
 
-func GetConf() *Configuration {
-	if conf != nil {
-		return conf
-	} else {
-		conf, err := LoadConfigurationForEnv(os.Getenv("ENV"))
-		if err != nil {
-			slog.Error("Unable to load config from env")
-			os.Exit(1)
+func init() {
+	once.Do(func() {
+		env, ok := os.LookupEnv("ENV")
+		if !ok {
+			panic("'ENV' environment variable is missing!")
 		}
 
-		return conf
-	}
+		var config *Configuration
+
+		viper.AddConfigPath("./config")
+		viper.SetConfigName(fmt.Sprintf("%s.yaml", env))
+		viper.SetConfigType("yaml")
+
+		if err := viper.ReadInConfig(); err != nil {
+			panic(fmt.Errorf("Could not read the config file: %v", err))
+		}
+
+		if err := viper.Unmarshal(&config); err != nil {
+			panic(fmt.Errorf("Could not unmarshal the config file: %v", err))
+		}
+
+		conf = config
+	})
 }
 
-func LoadConfigurationForEnv(env string) (*Configuration, error) {
-	var config *Configuration
-
-	viper.AddConfigPath("./config")
-	viper.SetConfigName(fmt.Sprintf("%s.yaml", env))
-	viper.SetConfigType("yaml")
-
-	err := viper.ReadInConfig()
-	if err != nil {
-		return nil, fmt.Errorf("Could not read the config file: %v", err)
-	}
-
-	err = viper.Unmarshal(&config)
-	if err != nil {
-		return nil, fmt.Errorf("Could not unmarshall the config file: %v", err)
-	}
-
-	return config, nil
+func Conf() *Configuration {
+	return conf
 }
