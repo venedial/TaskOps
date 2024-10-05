@@ -1,4 +1,4 @@
-module taskops
+module github.com/venedial/taskops
 
 go 1.23.1
 

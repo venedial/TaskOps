@@ -8,7 +8,7 @@ import (
 
 	slogmulti "github.com/samber/slog-multi"
 
-	"taskops/config"
+	"github.com/venedial/taskops/config"
 )
 
 var logFile *os.File
